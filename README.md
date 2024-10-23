@@ -10,6 +10,7 @@ Welcome to the MoMA Guide Discord Bot repository! This bot is designed to enhanc
 -  **MoMA Collection**: Specially focused on artworks from the Museum of Modern Art, including sculptures, paintings, and installations.
 
 ## Example Use Case
+<img width="818" alt="image" src="https://github.com/user-attachments/assets/844e7ad3-0a4d-48e1-8886-a074450fa58b">
 
 1. **Image Upload**: A user uploads an image of the "She-Goat" sculpture to the Discord chat.
 2. **Recognition**: The bot recognizes the artwork and identifies it as "She-Goat" by Pablo Picasso.
