@@ -1,14 +1,17 @@
 import dotenv from 'dotenv';
-dotenv.config();
+import path from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
+import { Client, Events, GatewayIntentBits } from "discord.js";
+import { OpenAI } from "openai";
 
-console.log("Hello World");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.resolve(__dirname, '.env'), override: true });
+
 
 let seanChannel;
-
-// require the discord.js classes
-import { Client, Events, GatewayIntentBits } from "discord.js";
-import * as fs from "fs";
-import { OpenAI } from "openai";
 
 let data = JSON.parse(fs.readFileSync("data.json", "utf8"));
 let heartCount = data.heartCount;
@@ -27,6 +30,8 @@ const client = new Client({
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY, // Use the environment variable
 });
+
+console.log("OpenAI API Key:", process.env.OPENAI_API_KEY.substring(0, 20) + "...");
 
 // When the client is ready, run this code (only once).
 client.once(Events.ClientReady, async (readyClient) => {
