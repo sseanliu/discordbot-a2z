@@ -44,15 +44,18 @@ client.once(Events.ClientReady, async (readyClient) => {
 // Log in to Discord with your client's token
 client.login(process.env.DISCORD_BOT_TOKEN);
 
+let aiMemory = [];
+
 client.on(Events.MessageCreate, async (message) => {
     if (message.channelId !== "1293623915138256998") return;
-    if (message.author.bot) return;
+    if (message.author.bot && message.author.id !== client.user.id) return;
 
     console.log(message);
 
     try {
         let messages = [
-            { role: "system", content: "You are a helpful assistant in a Discord chat. You can analyze both text and images." },
+            { role: "system", content: "You are an AI agent in a Discord chat. You can analyze both text and images, and you have the ability to read your own messages and continue conversations with yourself. Keep your responses concise." },
+            ...aiMemory,
             { role: "user", content: message.content }
         ];
 
@@ -82,7 +85,20 @@ client.on(Events.MessageCreate, async (message) => {
         });
 
         const reply = response.choices[0].message.content;
-        message.reply(reply);
+        
+        // Add the AI's response to memory
+        aiMemory.push({ role: "assistant", content: reply });
+        if (aiMemory.length > 10) aiMemory.shift(); // Keep memory limited to last 10 messages
+
+        await message.reply(reply);
+
+        // Self-conversation logic
+        if (Math.random() < 0.5 && !message.author.bot) { // 50% chance to continue the conversation
+            setTimeout(async () => {
+                const selfMessage = await message.channel.send("Hmm, let me think about that some more...");
+                client.emit(Events.MessageCreate, selfMessage);
+            }, 5000); // Wait 5 seconds before sending a follow-up message
+        }
 
         if (message.content.includes("❤️")) {
             message.react("❤️");
